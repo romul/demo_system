@@ -32,6 +32,7 @@ Then, you can visit the following links:
   - http://localhost:4000
   - http://localhost:4000/load
   - http://localhost:4000/services
+  - http://localhost:4000/top
 
 ## Demo
 

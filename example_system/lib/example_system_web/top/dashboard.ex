@@ -7,10 +7,10 @@ defmodule ExampleSystemWeb.Top.Dashboard do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("process_info", pid_str, socket),
+  def handle_event("process_info", %{ "pid" => pid_str}, socket),
     do: {:noreply, assign(socket, :output, process_info(:erlang.list_to_pid('<#{pid_str}>')))}
 
-  def handle_event("process_kill", pid_str, socket) do
+  def handle_event("process_kill", %{ "pid" => pid_str}, socket) do
     Process.exit(:erlang.list_to_pid('<#{pid_str}>'), :kill)
     {:noreply, socket}
   end
