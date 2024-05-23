@@ -33,6 +33,8 @@ Then, you can visit the following links:
   - http://localhost:4000/load
   - http://localhost:4000/services
   - http://localhost:4000/top
+## Env
+![image](https://github.com/dev5212512/demo_system/assets/146990270/e34105ef-e868-49c6-80b4-32f8866e8f9b)
 
 ## Demo
 
