@@ -1,8 +1,12 @@
-/* This file is for your main application css. */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-@import "./live_view.css";
+/* This file is for your main application CSS */
 
-body, input {
+
+body,
+input {
   font-size: 30px !important;
   font-family: "Courier new";
 }
@@ -23,9 +27,9 @@ body, input {
   display: grid;
   grid-row-gap: 2px;
   grid-column-gap: 1ch;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 40% 40% 20%;
   font-size: 30px !important;
-  width:70%;
+  width: 70%;
   margin: auto;
 }
 
@@ -67,9 +71,9 @@ body, input {
 
 .topDashboard {
   display: grid;
-  grid-template-columns: fit-content(40%) fit-content(60%) auto;
-  width:100%;
-  column-gap: 30px;
+  grid-template-columns: 400px 1fr;
+  width: 100%;
+  column-gap: 50px;
   margin: auto;
   justify-items: left;
 }
@@ -77,10 +81,11 @@ body, input {
 .processesGrid {
   font-size: 20px !important;
   display: grid;
-  grid-template-columns: fit-content(70%) fit-content(33%) fit-content(33%);
+  grid-template-columns: fit-content(40%) fit-content(35%) fit-content(25%);
   column-gap: 30px;
   margin: auto;
   justify-items: left;
+  min-width: 400px;
 }
 
 .header {
@@ -98,8 +103,15 @@ body, input {
   font-size: 16px;
   font-weight: lighter;
   margin-top: 4px;
+  max-width: 700px;
+  max-height: 330px;
 }
 
-.sumForm, .sumForm input {
+.sumForm {
+  max-width: 55%;
+}
+
+.sumForm,
+.sumForm input {
   font-size: 30px !important;
 }

@@ -1,20 +1,15 @@
-defmodule ExampleSystem.Mixfile do
+defmodule ExampleSystem.MixProject do
   use Mix.Project
 
   def project do
     [
       app: :example_system,
-      version: "0.0.1",
-      elixir: "~> 1.12",
+      version: "0.1.0",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      preferred_cli_env: [release: :prod, upgrade: :prod],
-      aliases: [
-        release: ["example_system.build_assets", "phx.digest", "release"],
-        upgrade: "example_system.upgrade"
-      ]
+      aliases: aliases(),
+      deps: deps()
     ]
   end
 
@@ -24,7 +19,7 @@ defmodule ExampleSystem.Mixfile do
   def application do
     [
       mod: {ExampleSystem.Application, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :wx, :observer, :runtime_tools]
     ]
   end
 
@@ -37,25 +32,32 @@ defmodule ExampleSystem.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:assertions, "~> 0.13", only: :test},
-      {:distillery, "~> 2.0"},
-      {:ecto_sql, "~> 3.9.0"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:load_control, path: "../load_control"},
-      {:parent, "~> 0.10.0"},
-      #{:phoenix_ecto, "~> 4.1"},
-      {:phoenix_html, "~> 2.14"},
+      {:phoenix, "~> 1.7.14"},
+      {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.15.5"},
-      {:phoenix, github: "phoenixframework/phoenix", override: true},
-      {:plug_cowboy, "~> 2.0"},
-      {:plug, "~> 1.7"},
-      {:recon, "~> 2.0"},
-      {:stream_data, "~> 0.4.3", only: :test},
-      {:swarm, "~> 3.0"}
+      # TODO bump on release to {:phoenix_live_view, "~> 1.0.0"},
+      {:phoenix_live_view, "~> 1.0.0-rc.6", override: true},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.1",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
+      {:jason, "~> 1.2"},
+      {:dns_cluster, "~> 0.1.1"},
+      {:bandit, "~> 1.5"},
+      {:load_control, path: "../load_control"},
+      {:parent, "~> 0.12.1"},
+      {:recon, "~> 2.5.6"},
+      {:swarm, "~> 3.4"},
+      {:stream_data, "~> 1.1", only: :test}
     ]
   end
 
@@ -67,13 +69,12 @@ defmodule ExampleSystem.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd --cd assets yarn"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      setup: ["deps.get", "assets.setup", "assets.build"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind example_system", "esbuild example_system"],
       "assets.deploy": [
-        "cmd --cd assets npm run deploy",
-        "esbuild default --minify",
+        "tailwind example_system --minify",
+        "esbuild example_system --minify",
         "phx.digest"
       ]
     ]

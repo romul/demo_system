@@ -18,7 +18,7 @@ defmodule LoadControl.Worker do
 
       _ = Enum.reduce(1..50, 0, &(&1 + &2))
       LoadControl.Stats.job_processed()
-      :erlang.garbage_collect()
+      #:erlang.garbage_collect()
       :timer.sleep(1000)
       loop(id)
     end

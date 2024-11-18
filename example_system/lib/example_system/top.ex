@@ -1,44 +1,33 @@
 defmodule ExampleSystem.Top do
-  use Parent.GenServer
+  use GenServer
 
-  def start_link(_), do: Parent.GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link(_), do: GenServer.start_link(__MODULE__, nil, name: __MODULE__)
 
   def subscribe(), do: GenServer.call(__MODULE__, :subscribe)
 
   @impl GenServer
-  def init(_), do: {:ok, %{subscribers: MapSet.new(), top: []}}
+  def init(_) do
+    Process.send_after(self(), :notify_subscribers, 1_000)
 
-  @impl GenServer
-  def handle_cast({:top, top}, state) do
-    Enum.each(state.subscribers, &send(&1, {:top, top}))
-    {:noreply, %{state | top: top}}
+    {:ok, %{subscribers: MapSet.new(), top: []}}
   end
 
   @impl GenServer
   def handle_call(:subscribe, {pid, _ref}, state) do
-    unless Parent.child?(:top), do: start_top()
     Process.monitor(pid)
     {:reply, state.top, update_in(state.subscribers, &MapSet.put(&1, pid))}
   end
 
   @impl GenServer
+  def handle_info(:notify_subscribers, state) do
+    new_top = Runtime.top(:timer.seconds(1))
+    Enum.each(state.subscribers, &send(&1, {:top, new_top}))
+    Process.send_after(self(), :notify_subscribers, 1_000)
+
+    {:noreply, %{state | top: new_top}}
+  end
+
   def handle_info({:DOWN, _mref, :process, pid, _reason}, state),
     do: {:noreply, update_in(state.subscribers, &MapSet.delete(&1, pid))}
 
-  @impl Parent.GenServer
-  def handle_child_terminated(:top, _meta, _pid, _reason, state) do
-    if MapSet.size(state.subscribers) > 0, do: start_top()
-    {:noreply, state}
-  end
-
-  defp start_top() do
-    Parent.start_child(%{
-      id: :top,
-      start: {Task, :start_link, [&top/0]},
-      shutdown: :brutal_kill,
-      timeout: :timer.seconds(5)
-    })
-  end
-
-  defp top(), do: GenServer.cast(__MODULE__, {:top, Runtime.top(:timer.seconds(1))})
 end

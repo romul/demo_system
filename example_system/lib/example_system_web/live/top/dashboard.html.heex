@@ -1,0 +1,23 @@
+<div class="topDashboard">
+  <div class="processesGrid">
+    <%= unless is_nil(@top) do %>
+      <div></div>
+      <div class="header">Process</div>
+      <div class="header">CPU</div>
+      <%= for process <- @top do %>
+        <div class="actions">
+          <a href="#" phx-click="process_trace" phx-value-pid={stringify_pid(process.pid)} class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80">trace</a>
+          <a href="#" phx-click="process_kill" phx-value-pid={stringify_pid(process.pid)} class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80">kill</a>
+        </div>
+        <div class="pid"><%= stringify_pid(process.pid) %></div>
+        <div class="cpu"><%= process.cpu %>%</div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div>
+    <pre class="output">
+      <%= @output %>
+    </pre>
+  </div>
+</div>

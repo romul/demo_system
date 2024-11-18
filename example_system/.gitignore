@@ -27,3 +27,9 @@ erl_crash.dump
 # this depending on your deployment strategy.
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
+
+# In case you use Node.js/npm, you want to ignore these.
+npm-debug.log
+**/node_modules/
+
+**/.DS_Store

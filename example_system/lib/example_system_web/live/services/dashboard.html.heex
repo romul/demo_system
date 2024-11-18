@@ -1,0 +1,24 @@
+<div>
+  <.form for={@service} phx-submit="add_service">
+    <.input field={@service[:name]} name="service[name]" value="" autofocus />
+  </.form>
+</div>
+
+<ul class="paragraph">
+  <%= for node <- @nodes do %>
+  <li>
+    <%= node.name %>
+    <ul>
+      <%= for service <- node.services do %>
+      <li>
+        <.link href="#" phx-click={"invoke_#{service}"}><%= service %></.link>
+      </li>
+      <% end %>
+    </ul>
+  </li>
+  <% end %>
+</ul>
+
+<%= if @response != nil do %>
+<div class="paragraph"><%= @response %></div>
+<% end %>

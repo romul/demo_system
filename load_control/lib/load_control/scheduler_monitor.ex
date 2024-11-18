@@ -45,5 +45,5 @@ defmodule LoadControl.SchedulerMonitor do
     |> Enum.into(%{})
   end
 
-  defp enqueue_next(), do: Process.send_after(self(), :calc_stats, 200)
+  defp enqueue_next(), do: Process.send_after(self(), :calc_stats, 500)
 end

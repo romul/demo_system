@@ -1,0 +1,29 @@
+<div class="mainGrid">
+  <div class="loadGrid">
+    <.form for={@data} phx-submit="change_load">
+      <.input type="number" field={@data[:value]} name="data[value]" value={@load["value"]} />
+    </.form>
+    <div>jobs (<span phx-click="highlight_memory" class={highlight_class(@highlighted, "memory")}>
+      <%= @metrics.memory_usage %> MB
+      </span>)
+    </div>
+    <div>
+      <input type="button" value="reset" phx-click="reset" class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80" />
+    </div>
+
+    <.form for={@schedulers} phx-submit="change_schedulers">
+      <.input type="number" name="data[value]" value={@schedulers["value"]} />
+    </.form>
+    <div>schedulers</div>
+  </div>
+
+  <div class="chartsGrid">
+    <div phx-click="highlight_jobs_graph" class={highlight_class(@highlighted, "jobs_graph")}>
+      <%= graph(%{graph: @metrics.jobs_graph, title: "successful jobs/sec"}) %>
+    </div>
+
+    <div phx-click="highlight_scheduler_graph" class={highlight_class(@highlighted, "scheduler_graph")}>
+      <%= graph(%{graph: @metrics.scheduler_graph, title: "scheduler usage"}) %>
+    </div>
+  </div>
+</div>

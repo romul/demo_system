@@ -94,5 +94,5 @@ defmodule LoadControl.Stats do
     value
   end
 
-  defp enqueue_next(), do: Process.send_after(self(), :emit_stats, 100)
+  defp enqueue_next(), do: Process.send_after(self(), :emit_stats, 500)
 end

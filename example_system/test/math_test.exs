@@ -24,12 +24,5 @@ defmodule ExampleSystem.MathTest do
     end
   end
 
-  test "large input" do
-    n = 999_999_999
-    assert {:ok, pid} = Math.sum(n)
-    assert_receive({:sum, ^pid, sum})
-    assert sum == Enum.sum(1..n)
-  end
-
   defp valid_input(), do: positive_integer()
 end

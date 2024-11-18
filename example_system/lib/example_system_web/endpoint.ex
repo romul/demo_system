@@ -6,56 +6,47 @@ defmodule ExampleSystemWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    # Make sure session cookies survive a restarted browser
-    max_age: 9_999_999_999,
     key: "_example_system_key",
-    signing_salt: "JFWrRJY1"
-    # encryption_salt: "SALT BAE cookie store encryption salt"
+    signing_salt: "z2RGEu9n",
+    same_site: "Lax"
   ]
 
-  socket("/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]])
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [connect_info: [session: @session_options]],
+    longpoll: [connect_info: [session: @session_options]]
 
-  plug(Plug.Static,
+  # Serve at "/" the static files from "priv/static" directory.
+  #
+  # You should set gzip to true if you are running phx.digest
+  # when deploying your static files in production.
+  plug Plug.Static,
     at: "/",
     from: :example_system,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
-  )
+    only: ExampleSystemWeb.static_paths()
 
+  # Code reloading can be explicitly enabled under the
+  # :code_reloader configuration of your endpoint.
   if code_reloading? do
-    socket("/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket)
-    plug(Phoenix.LiveReloader)
-    plug(Phoenix.CodeReloader)
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
+    plug Phoenix.CodeReloader
   end
 
-  plug(Plug.RequestId)
-  plug(Plug.Logger)
+  plug Phoenix.LiveDashboard.RequestLogger,
+    param_key: "request_logger",
+    cookie_key: "request_logger"
 
-  plug(Plug.Parsers,
+  plug Plug.RequestId
+  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+
+  plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Jason
-  )
+    json_decoder: Phoenix.json_library()
 
-  plug(Plug.MethodOverride)
-  plug(Plug.Head)
-
-  plug(
-    Plug.Session,
-    @session_options
-  )
-
-  plug(ExampleSystemWeb.Router)
-
-  @doc """
-  Callback invoked for dynamically configuring the endpoint.
-
-  It receives the endpoint configuration and checks if
-  configuration should be loaded from the system environment.
-  """
-  def init(_key, config), do: {:ok, put_in(config[:http][:port], port())}
-
-  defp port() do
-    if node() == :"node2@127.0.0.1", do: 4001, else: 4000
-  end
+  plug Plug.MethodOverride
+  plug Plug.Head
+  plug Plug.Session, @session_options
+  plug ExampleSystemWeb.Router
 end

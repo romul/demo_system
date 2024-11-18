@@ -1,0 +1,15 @@
+<div class="sumForm">
+  <h1>Введите целое положительное число</h1>
+
+  <.form for={@data} phx-submit="submit">
+    <.input type="number" field={@data[:to]} name="data[to]" value=""/>
+  </.form>
+
+  <br />
+
+  <div>
+    <%= for operation <- @operations do %>
+    <div>∑(1..<%= operation.input %>) = <%= operation.result %></div>
+    <% end %>
+  </div>
+</div>
