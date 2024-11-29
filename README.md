@@ -14,10 +14,10 @@ Building:
 
 ```
 cd example_system
+
 mix deps.get &&
-pushd assets &&
-npm install &&
-popd &&
+mix assets.build &&
+mix assets.deploy &&
 mix compile
 ```
 
@@ -42,20 +42,20 @@ Building and starting for production (in the background):
 
 ```
 cd example_system
-./rebuild.sh
-./_build/prod/rel/system/bin/system start
+MIX_ENV=prod mix release
+./_build/prod/rel/example_system/bin/server
 ```
 
 Open the remote console:
 
 ```
-./_build/prod/rel/system/bin/system remote_console
+./_build/prod/rel/example_system/bin/example_system remote_console
 ```
 
 Hot upgrade with no downtime:
 
 ```
-mix system.upgrade
+MIX_ENV=prod mix example_system.upgrade
 ```
 
 # Processes structure overview
